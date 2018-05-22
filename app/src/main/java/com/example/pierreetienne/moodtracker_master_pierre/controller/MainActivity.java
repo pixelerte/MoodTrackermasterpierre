@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +26,7 @@ import static com.example.pierreetienne.moodtracker_master_pierre.R.color.banana
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
 
+    private static final String TAG = "activity_main";
     private RelativeLayout mBackground;
     private ImageView mImage;
     private ImageButton mhistory;
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
 
-    private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperappy};
+    private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
 
 
     @Override
@@ -69,8 +71,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     protected void onSaveInstanceState(Bundle stateSaved) {
         super.onSaveInstanceState(stateSaved);
         stateSaved.putInt("my_mood", moodNumber);
-        Toast.makeText(this, "onSaveInstanceState()", Toast.LENGTH_LONG).show();
-
+        Log.i(TAG, "onSaveInstanceState: ");
 
     }
 
@@ -81,13 +82,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         super.onRestoreInstanceState(savedInstanceState);
         // restore saved values
         moodNumber = savedInstanceState.getInt("my_mood");
-        Toast.makeText(this, "onRestoreInstanceState()", Toast.LENGTH_LONG).show();
+        Log.i(TAG, "onRestoreInstanceState: ");
 
     }
 
 
         private View.OnClickListener mnoteClick = new View.OnClickListener() {
             public void onClick(View v) {
+
+                Log.i(TAG, "onClick: mnoteClick");
 
 
             }
@@ -97,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private View.OnClickListener mhistoryClick = new View.OnClickListener() {
         public void onClick(View v) {
 
+            Log.i(TAG, "onClick: mhistoryClick");
+
 
         }
     };
@@ -105,6 +110,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        System.err.print("var moodNumber = " + moodNumber);
+
         return gDetector.onTouchEvent(event);
 
 
@@ -148,13 +156,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         {
 
             //if no more mood, nothing
-            if (moodNumber == 4)
+           /* if (moodNumber == 4)
             {
 
-            }
+            }*/
 
             //if there are others moods show next moods
-            else if (moodNumber < 4)
+            if (moodNumber < 4)
             {
                 moodNumber++;
 
@@ -189,6 +197,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
                 }
         }
+
+
+
+        Log.i(TAG, "var mood number " + moodNumber );
 
                 return false;
 
