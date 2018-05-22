@@ -8,8 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.pierreetienne.moodtracker_master_pierre.R;
 
@@ -19,11 +22,13 @@ import static com.example.pierreetienne.moodtracker_master_pierre.R.color.banana
 
 @TargetApi(Build.VERSION_CODES.M)
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener{
+public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
 
-    private LinearLayout mBackground;
+    private RelativeLayout mBackground;
     private ImageView mImage;
+    private ImageButton mhistory;
+    public ImageButton mnote;
     private GestureDetector gDetector;
     private int moodNumber = 3;
 
@@ -40,18 +45,41 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         gDetector = new GestureDetector(this);
         mBackground = findViewById(R.id.background);
         mImage = findViewById(R.id.imageSmailly);
+        mhistory = findViewById(R.id.history);
+        mnote =findViewById(R.id.note);
 
         mBackground.setBackgroundColor(getColor(tabBackgroundColor[moodNumber]));
         mImage.setImageResource(image[moodNumber]);
 
+        mnote.setOnClickListener(mnoteClick);
+        mhistory.setOnClickListener(mhistoryClick);
+
     }
+
+    private View.OnClickListener mnoteClick = new View.OnClickListener() {
+        public void onClick(View v) {
+
+
+
+        }
+    };
+
+    private View.OnClickListener mhistoryClick = new View.OnClickListener() {
+        public void onClick(View v) {
+
+
+        }
+    };
 
     //detects the interaction between user and screen
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return gDetector.onTouchEvent(event);
-        }
+
+
+    }
+
 
 
     @Override
