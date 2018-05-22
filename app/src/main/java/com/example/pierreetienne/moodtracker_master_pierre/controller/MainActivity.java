@@ -2,14 +2,18 @@ package com.example.pierreetienne.moodtracker_master_pierre.controller;
 
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -30,9 +34,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private RelativeLayout mBackground;
     private ImageView mImage;
     private ImageButton mhistory;
-    public ImageButton mnote;
+    public ImageButton mnoteIcone;
     private GestureDetector gDetector;
     private int moodNumber = 3;
+    private String noteUser = "";
 
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
 
@@ -54,12 +59,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mBackground = findViewById(R.id.background);
         mImage = findViewById(R.id.imageSmailly);
         mhistory = findViewById(R.id.history);
-        mnote =findViewById(R.id.note);
+        mnoteIcone =findViewById(R.id.note);
 
         mBackground.setBackgroundColor(getColor(tabBackgroundColor[moodNumber]));
         mImage.setImageResource(image[moodNumber]);
 
-        mnote.setOnClickListener(mnoteClick);
+        mnoteIcone.setOnClickListener(mnoteClick);
         mhistory.setOnClickListener(mhistoryClick);
 
 
@@ -87,14 +92,42 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
 
+
+        //detect click on the button note
+
         private View.OnClickListener mnoteClick = new View.OnClickListener() {
             public void onClick(View v) {
 
-                Log.i(TAG, "onClick: mnoteClick");
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("add comments");
 
 
-            }
-        };
+                //create area text input
+                final EditText input = new EditText(MainActivity.this);
+                input.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
+                builder.setView(input);
+
+                //save comment user
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        noteUser= input.getText().toString();
+                    }
+                });
+
+                //cancel, no saving comment
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+        }
+    };
 
 
     private View.OnClickListener mhistoryClick = new View.OnClickListener() {
@@ -114,8 +147,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         System.err.print("var moodNumber = " + moodNumber);
 
         return gDetector.onTouchEvent(event);
-
-
     }
 
     @Override
@@ -201,6 +232,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
 
         Log.i(TAG, "var mood number " + moodNumber );
+
+
 
                 return false;
 
