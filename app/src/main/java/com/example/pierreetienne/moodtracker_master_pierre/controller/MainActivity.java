@@ -42,6 +42,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null) {
+            moodNumber = savedInstanceState.getInt("my_mood");
+        }
+
+
+
         gDetector = new GestureDetector(this);
         mBackground = findViewById(R.id.background);
         mImage = findViewById(R.id.imageSmailly);
@@ -54,15 +60,39 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mnote.setOnClickListener(mnoteClick);
         mhistory.setOnClickListener(mhistoryClick);
 
+
     }
 
-    private View.OnClickListener mnoteClick = new View.OnClickListener() {
-        public void onClick(View v) {
+    //save moodNumber
+
+    @Override
+    protected void onSaveInstanceState(Bundle stateSaved) {
+        super.onSaveInstanceState(stateSaved);
+        stateSaved.putInt("my_mood", moodNumber);
+        Toast.makeText(this, "onSaveInstanceState()", Toast.LENGTH_LONG).show();
 
 
+    }
 
-        }
-    };
+    //Restore moodNumber
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // restore saved values
+        moodNumber = savedInstanceState.getInt("my_mood");
+        Toast.makeText(this, "onRestoreInstanceState()", Toast.LENGTH_LONG).show();
+
+    }
+
+
+        private View.OnClickListener mnoteClick = new View.OnClickListener() {
+            public void onClick(View v) {
+
+
+            }
+        };
+
 
     private View.OnClickListener mhistoryClick = new View.OnClickListener() {
         public void onClick(View v) {
@@ -79,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
 
     }
-
-
 
     @Override
     public boolean onDown(MotionEvent motionEvent) {
@@ -134,6 +162,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 mBackground.setBackgroundColor(getColor(tabBackgroundColor[moodNumber]));
 
                 mImage.setImageResource(image[moodNumber]);
+
+
             }
         }
 
