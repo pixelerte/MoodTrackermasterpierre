@@ -21,6 +21,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.pierreetienne.moodtracker_master_pierre.R;
+import com.example.pierreetienne.moodtracker_master_pierre.model.MoodsSave;
+import com.google.gson.Gson;
 
 
 import static com.example.pierreetienne.moodtracker_master_pierre.R.color.banana_yellow;
@@ -40,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private int moodNumber = 3;
     private String noteUser = "";
     private SharedPreferences mPreferences;
+    private MoodsSave userMoodSave = new MoodsSave();
+    private Gson gson = new Gson();
 
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
 
@@ -52,8 +56,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState != null) {
-            moodNumber = savedInstanceState.getInt("my_mood");
+            moodNumber = savedInstanceState.getInt("user_mood");
         }
+
 
 
 
@@ -73,14 +78,18 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mPreferences = getPreferences(MODE_PRIVATE);
 
 
+
+
     }
+
+
 
     //save moodNumber
 
     @Override
     protected void onSaveInstanceState(Bundle stateSaved) {
         super.onSaveInstanceState(stateSaved);
-        stateSaved.putInt("my_mood", moodNumber);
+        stateSaved.putInt("user_mood", moodNumber);
         Log.i(TAG, "onSaveInstanceState: ");
 
     }
@@ -91,14 +100,14 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // restore saved values
-        moodNumber = savedInstanceState.getInt("my_mood");
+        moodNumber = savedInstanceState.getInt("user_mood");
         Log.i(TAG, "onRestoreInstanceState: ");
 
     }
 
 
 
-        //detect click on the button note
+    //detect click on the button note
 
         private View.OnClickListener mnoteClick = new View.OnClickListener() {
             public void onClick(View v) {
@@ -117,7 +126,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Log.i(TAG, "onClick: OK");
                         noteUser= input.getText().toString();
+                        userMoodSave.setComment(noteUser);
+                        Log.i(TAG, "save comment on userMoodSave => " + userMoodSave.getComment());
+
 
                     }
                 });
@@ -126,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Log.i(TAG, "onClick: Cancel");
                         dialog.cancel();
                     }
                 });
@@ -136,21 +150,22 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     };
 
 
+
+    //detect click on the button history
+
     private View.OnClickListener mhistoryClick = new View.OnClickListener() {
         public void onClick(View v) {
 
             Log.i(TAG, "onClick: mhistoryClick");
 
-
         }
     };
+    
 
     //detects the interaction between user and screen
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        System.err.print("var moodNumber = " + moodNumber);
 
         return gDetector.onTouchEvent(event);
     }
@@ -226,21 +241,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
                 mImage.setImageResource(image[moodNumber]);
 
+                userMoodSave.setMoodsNumber(moodNumber);
+
                 }
         }
 
-
-
         Log.i(TAG, "var mood number " + moodNumber );
+        return false;
 
-
-
-                return false;
-
-    }
-
-
-
+        }
 
 }
 
