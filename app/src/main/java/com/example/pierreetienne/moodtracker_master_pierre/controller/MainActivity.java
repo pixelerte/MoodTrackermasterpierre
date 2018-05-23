@@ -4,6 +4,7 @@ package com.example.pierreetienne.moodtracker_master_pierre.controller;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private GestureDetector gDetector;
     private int moodNumber = 3;
     private String noteUser = "";
+    private SharedPreferences mPreferences;
 
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
 
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         gDetector = new GestureDetector(this);
         mBackground = findViewById(R.id.background);
+
         mImage = findViewById(R.id.imageSmailly);
         mhistory = findViewById(R.id.history);
         mnoteIcone =findViewById(R.id.note);
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         mnoteIcone.setOnClickListener(mnoteClick);
         mhistory.setOnClickListener(mhistoryClick);
+
+        mPreferences = getPreferences(MODE_PRIVATE);
 
 
     }
@@ -113,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         noteUser= input.getText().toString();
+
                     }
                 });
 
@@ -185,12 +191,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         if (motionEvent.getY() < motionEvent1.getY())
         {
-
-            //if no more mood, nothing
-           /* if (moodNumber == 4)
-            {
-
-            }*/
 
             //if there are others moods show next moods
             if (moodNumber < 4)
