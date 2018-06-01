@@ -2,13 +2,18 @@ package com.example.pierreetienne.moodtracker_master_pierre.controller;
 
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -18,18 +23,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.example.pierreetienne.moodtracker_master_pierre.R;
 import com.example.pierreetienne.moodtracker_master_pierre.model.MoodsSave;
 import com.google.gson.Gson;
 
+import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.pierreetienne.moodtracker_master_pierre.R.color.banana_yellow;
 
 
-@TargetApi(Build.VERSION_CODES.M)
-@RequiresApi(api = Build.VERSION_CODES.M)
+
 public class MainActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
 
 
@@ -43,13 +48,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private String noteUser = "";
     private SharedPreferences mPreferences;
     private MoodsSave userMoodSave = new MoodsSave();
-    private Gson gson = new Gson();
-
+    private PendingIntent pendingIntent;
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
-
     private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
 
-
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,32 +63,53 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             moodNumber = savedInstanceState.getInt("user_mood");
         }
 
-
-
-
         gDetector = new GestureDetector(this);
         mBackground = findViewById(R.id.background);
-
         mImage = findViewById(R.id.imageSmailly);
         mhistory = findViewById(R.id.history);
         mnoteIcone =findViewById(R.id.note);
-
-        mBackground.setBackgroundColor(getColor(tabBackgroundColor[moodNumber]));
-        mImage.setImageResource(image[moodNumber]);
-
         mnoteIcone.setOnClickListener(mnoteClick);
         mhistory.setOnClickListener(mhistoryClick);
-
-        mPreferences = getPreferences(MODE_PRIVATE);
-
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
 
+        startAlarm();
+
+        String testPref = mPreferences.getString("PrefMoodUserSave", null);
+
+        if (testPref != null) loadMood();
+
+        mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
+        mImage.setImageResource(image[moodNumber]);
 
     }
 
 
+    //set alarm, call AlarmeMoodsClock.class
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void startAlarm() {
 
-    //save moodNumber
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Date dat = new Date();
+        Calendar calendar = Calendar.getInstance();
+        Calendar cal_now = Calendar.getInstance();
+        cal_now.setTime(dat);
+
+        calendar.setTime(dat);
+        calendar.set(Calendar.HOUR_OF_DAY,11);
+        calendar.set(Calendar.MINUTE,32);
+
+        if(calendar.before(cal_now)){
+            calendar.add(Calendar.DATE,1);
+        }
+
+        Intent myIntent = new Intent(MainActivity.this, AlarmeMoodsClock.class);
+        pendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0);
+
+        manager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()+10, pendingIntent);
+    }
+
+    //save moodNumber for rotation
 
     @Override
     protected void onSaveInstanceState(Bundle stateSaved) {
@@ -94,11 +119,12 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
     }
 
-    //Restore moodNumber
+    //Restore moodNumber for rotation
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+
         // restore saved values
         moodNumber = savedInstanceState.getInt("user_mood");
         Log.i(TAG, "onRestoreInstanceState: ");
@@ -106,11 +132,43 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
 
+    //save object Mood ,Preferences
+    protected void saveMood(){
+
+        SharedPreferences.Editor prefsEditor = mPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(userMoodSave);
+        prefsEditor.putString("PrefMoodUserSave", json);
+        prefsEditor.apply();
+
+        Log.i(TAG, "PrefMoodUserSave: ");
+
+        }
+
+    //load object Mood ,Preferences
+    protected void loadMood(){
+
+        Gson gson = new Gson();
+        String json = mPreferences.getString("PrefMoodUserSave", "");
+        MoodsSave test = gson.fromJson(json, MoodsSave.class);
+
+        moodNumber = test.getMoodsNumber();
+
+        userMoodSave.setComment(test.getComment());
+
+        Log.i(TAG, "PrefMoodUserLoad: " + userMoodSave.getComment() + " " + moodNumber);
+
+        }
+
 
     //detect click on the button note
 
         private View.OnClickListener mnoteClick = new View.OnClickListener() {
             public void onClick(View v) {
+
+                userMoodSave.setMoodsNumber(moodNumber);
+
+                saveMood();
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -128,10 +186,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i(TAG, "onClick: OK");
                         noteUser= input.getText().toString();
-                        userMoodSave.setComment(noteUser);
-                        Log.i(TAG, "save comment on userMoodSave => " + userMoodSave.getComment());
+                        if (noteUser.length() > 0){
 
+                            userMoodSave.setComment(noteUser);
+                            Log.i(TAG, "save comment on userMoodSave => " + userMoodSave.getComment());
+                            saveMood();
 
+                        }
                     }
                 });
 
@@ -141,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i(TAG, "onClick: Cancel");
                         dialog.cancel();
+
+                        userMoodSave.setMoodsNumber(moodNumber);
                     }
                 });
 
@@ -157,6 +220,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         public void onClick(View v) {
 
             Log.i(TAG, "onClick: mhistoryClick");
+
+            saveMood();
 
         }
     };
@@ -213,10 +278,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 moodNumber++;
 
                 //change background color end change moods image
-                mBackground.setBackgroundColor(getColor(tabBackgroundColor[moodNumber]));
+                mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
 
                 mImage.setImageResource(image[moodNumber]);
 
+                userMoodSave.setMoodsNumber(moodNumber);
+
+                saveMood();
 
             }
         }
@@ -225,23 +293,19 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         else if(motionEvent.getY() > motionEvent1.getY()){
 
-            //if no more mood, nothing
-            if (moodNumber == 0){
-                moodNumber = 0;
-
-            }
-
             //if there are others moods show next moods
-            else if(moodNumber > 0)
+            if(moodNumber > 0)
             {
                 moodNumber--;
 
                 //change background color end change moods image
-                mBackground.setBackgroundColor(getColor(tabBackgroundColor[moodNumber]));
+                mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
 
                 mImage.setImageResource(image[moodNumber]);
 
                 userMoodSave.setMoodsNumber(moodNumber);
+
+                saveMood();
 
                 }
         }
