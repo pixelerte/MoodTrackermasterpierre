@@ -1,6 +1,5 @@
 package com.example.pierreetienne.moodtracker_master_pierre.controller;
 
-
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -9,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,12 +25,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Date;
+
 import com.example.pierreetienne.moodtracker_master_pierre.R;
 import com.example.pierreetienne.moodtracker_master_pierre.model.MoodsSave;
 import com.google.gson.Gson;
-
-import java.util.Calendar;
-import java.util.Date;
 
 import static com.example.pierreetienne.moodtracker_master_pierre.R.color.banana_yellow;
 
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private PendingIntent pendingIntent;
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
     private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
+    private int[] tabSound = {R.raw.soundsad, R.raw.sounddisappointed, R.raw.soundnormal, R.raw.soundhappy, R.raw.soundsuperhappy};
 
     @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -75,9 +78,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         startAlarm();
 
-        String testPref = mPreferences.getString("PrefMoodUserSave", null);
+        String prefTester = mPreferences.getString("PrefMoodUserSave", null);
 
-        if (testPref != null) loadMood();
+        if (prefTester != null) loadMood();
 
         mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
         mImage.setImageResource(image[moodNumber]);
@@ -96,8 +99,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         cal_now.setTime(dat);
 
         calendar.setTime(dat);
-        calendar.set(Calendar.HOUR_OF_DAY,11);
-        calendar.set(Calendar.MINUTE,32);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
 
         if(calendar.before(cal_now)){
             calendar.add(Calendar.DATE,1);
@@ -109,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         manager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()+10, pendingIntent);
     }
 
-    //save moodNumber for rotation
 
+    //save moodNumber for rotation
     @Override
     protected void onSaveInstanceState(Bundle stateSaved) {
         super.onSaveInstanceState(stateSaved);
@@ -120,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     //Restore moodNumber for rotation
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -130,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Log.i(TAG, "onRestoreInstanceState: ");
 
     }
-
 
     //save object Mood ,Preferences
     protected void saveMood(){
@@ -150,19 +151,25 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
         Gson gson = new Gson();
         String json = mPreferences.getString("PrefMoodUserSave", "");
-        MoodsSave test = gson.fromJson(json, MoodsSave.class);
+        MoodsSave moodsSaveLoad = gson.fromJson(json, MoodsSave.class);
 
-        moodNumber = test.getMoodsNumber();
-
-        userMoodSave.setComment(test.getComment());
+        moodNumber = moodsSaveLoad.getMoodsNumber();
+        userMoodSave.setComment(moodsSaveLoad.getComment());
 
         Log.i(TAG, "PrefMoodUserLoad: " + userMoodSave.getComment() + " " + moodNumber);
 
         }
 
+    //change background color end change moods image
+    protected void setMoodsScreen(){
 
-    //detect click on the button note
+        mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
+        mImage.setImageResource(image[moodNumber]);
+        userMoodSave.setMoodsNumber(moodNumber);
+    }
 
+
+        //detect click on the button note
         private View.OnClickListener mnoteClick = new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -208,14 +215,11 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 });
 
                 builder.show();
-
-        }
+                }
     };
 
 
-
     //detect click on the button history
-
     private View.OnClickListener mhistoryClick = new View.OnClickListener() {
         public void onClick(View v) {
 
@@ -228,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     
 
     //detects the interaction between user and screen
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -263,12 +266,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     //detects user fling on screen
-
     @Override
     public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
 
         //if user go up
-
         if (motionEvent.getY() < motionEvent1.getY())
         {
 
@@ -276,39 +277,29 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             if (moodNumber < 4)
             {
                 moodNumber++;
-
-                //change background color end change moods image
-                mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
-
-                mImage.setImageResource(image[moodNumber]);
-
-                userMoodSave.setMoodsNumber(moodNumber);
-
+                setMoodsScreen();
                 saveMood();
-
             }
         }
 
         //if user go down
-
         else if(motionEvent.getY() > motionEvent1.getY()){
 
             //if there are others moods show next moods
             if(moodNumber > 0)
             {
                 moodNumber--;
-
-                //change background color end change moods image
-                mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
-
-                mImage.setImageResource(image[moodNumber]);
-
-                userMoodSave.setMoodsNumber(moodNumber);
-
+                setMoodsScreen();
                 saveMood();
-
-                }
+            }
         }
+
+
+
+        //play sound Moods
+        final MediaPlayer mp = MediaPlayer.create(this, tabSound[moodNumber]);
+        mp.start();
+
 
         Log.i(TAG, "var mood number " + moodNumber );
         return false;
