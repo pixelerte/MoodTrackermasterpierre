@@ -1,8 +1,8 @@
 package com.example.pierreetienne.moodtracker_master_pierre.model;
 public class MoodsSave {
 
-    private int moodsNumber;
-    private String comment;
+    private int moodsNumber = 3;
+    private String comment = null;
 
     public MoodsSave() {
     }
@@ -24,7 +24,7 @@ public class MoodsSave {
     }
 
     public String toString() {
-        return " toString Moods Save: moods number = " + moodsNumber + " comment = " + comment + " ";
+        return " toString Moods Save: moods number = " + moodsNumber + " comment = " + comment + " . ";
     }
 
 }

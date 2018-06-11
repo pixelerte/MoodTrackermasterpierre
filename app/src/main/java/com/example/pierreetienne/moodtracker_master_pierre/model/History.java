@@ -47,9 +47,6 @@ public class History {
             i++;
         }
 
-
-
-
         return " toString History = " + str;
     }
 

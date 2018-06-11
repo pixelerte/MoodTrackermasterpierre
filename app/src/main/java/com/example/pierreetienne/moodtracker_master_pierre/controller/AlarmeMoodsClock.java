@@ -12,18 +12,14 @@ import com.example.pierreetienne.moodtracker_master_pierre.model.MoodsSave;
 import com.google.gson.Gson;
 
 import static android.content.ContentValues.TAG;
-import static android.support.v4.content.ContextCompat.startActivity;
 
 
 public class AlarmeMoodsClock extends BroadcastReceiver {
 
 
-
-
+    //mood save in the history and reset mood for MainActivity
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        Log.i(TAG, "onReceive: ");
 
         History HistoryList = loadHistory(context);
         MoodsSave userMoodSave = loadMood(context);
@@ -31,7 +27,6 @@ public class AlarmeMoodsClock extends BroadcastReceiver {
         if(HistoryList == null){
 
             HistoryList = new History();
-            Log.i(TAG, "onReceive: New List");
 
         }
 
@@ -41,12 +36,14 @@ public class AlarmeMoodsClock extends BroadcastReceiver {
         if (HistoryList.getSizeList() > 7){
 
             HistoryList.removeList(0);
-            Log.i(TAG, "onReceive: remove 0");
 
             }
 
-        saveHistory(context, HistoryList);
-        resetMood(context, userMoodSave);
+            saveHistory(context, HistoryList);
+            resetMood(context);
+
+            //restart MainActivity
+            MainActivity.getInstance().recreate();
 
         }
 
@@ -88,10 +85,9 @@ public class AlarmeMoodsClock extends BroadcastReceiver {
         return userMoodSave;
         }
 
-    protected void resetMood(Context context, MoodsSave userMoodSave){
+    protected void resetMood(Context context){
 
-        userMoodSave.setComment("");
-        userMoodSave.setMoodsNumber(3);
+        MoodsSave userMoodSave = new MoodsSave();
 
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Gson gson = new Gson();
@@ -99,8 +95,6 @@ public class AlarmeMoodsClock extends BroadcastReceiver {
         String SaveHistoryJson = gson.toJson(userMoodSave);
         prefsEditor.putString("PrefMoodUserSave", SaveHistoryJson);
         prefsEditor.apply();
-
-        Log.i(TAG, "resetMood: " + userMoodSave.getComment() + " ; " + userMoodSave.getMoodsNumber());
         }
 
 

@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,13 +24,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Date;
-
 import com.example.pierreetienne.moodtracker_master_pierre.R;
 import com.example.pierreetienne.moodtracker_master_pierre.model.MoodsSave;
 import com.google.gson.Gson;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.pierreetienne.moodtracker_master_pierre.R.color.banana_yellow;
 
@@ -54,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
     private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
     private int[] tabSound = {R.raw.soundsad, R.raw.sounddisappointed, R.raw.soundnormal, R.raw.soundhappy, R.raw.soundsuperhappy};
+    private static MainActivity mMainActivity;
+
 
     @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         if (savedInstanceState != null) {
             moodNumber = savedInstanceState.getInt("user_mood");
@@ -74,19 +75,18 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mnoteIcone.setOnClickListener(mnoteClick);
         mhistory.setOnClickListener(mhistoryClick);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
+        mMainActivity = MainActivity.this;
 
         startAlarm();
 
         String prefTester = mPreferences.getString("PrefMoodUserSave", null);
 
-        if (prefTester != null) loadMood();
+        if (prefTester != null || userMoodSave.getMoodsNumber() == -1) loadMood();
 
         mBackground.setBackgroundColor(getResources().getColor(tabBackgroundColor[moodNumber]));
         mImage.setImageResource(image[moodNumber]);
 
     }
-
 
     //set alarm, call AlarmeMoodsClock.class
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         cal_now.setTime(dat);
 
         calendar.setTime(dat);
-        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.HOUR,0);
         calendar.set(Calendar.MINUTE,0);
 
         if(calendar.before(cal_now)){
@@ -109,7 +109,13 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Intent myIntent = new Intent(MainActivity.this, AlarmeMoodsClock.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0);
 
-        manager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()+10, pendingIntent);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()+10, AlarmManager.INTERVAL_DAY, pendingIntent);
+    }
+
+    public static MainActivity getInstance(){
+
+
+        return mMainActivity;
     }
 
 
@@ -193,12 +199,16 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i(TAG, "onClick: OK");
                         noteUser= input.getText().toString();
+
                         if (noteUser.length() > 0){
 
                             userMoodSave.setComment(noteUser);
                             Log.i(TAG, "save comment on userMoodSave => " + userMoodSave.getComment());
                             saveMood();
+                            }
 
+                        else {
+                            userMoodSave.setComment(null);
                         }
                     }
                 });
@@ -225,7 +235,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
             Log.i(TAG, "onClick: mhistoryClick");
 
+            Intent historyActivity = new Intent(MainActivity.this, HistoryActivity.class);
             saveMood();
+
+
+            Log.i(TAG, "PrefMoodUserSave: ");
+
+
+
+            startActivity(historyActivity);
 
         }
     };
@@ -305,6 +323,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         return false;
 
         }
+
 
 }
 
