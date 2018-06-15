@@ -25,6 +25,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
     private int i = 0;
     private History history;
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
+    private String[] tabDayView = {"yesterday", "tow days ago", "three days ago", "four days ago", "five days ago", "six days ago", "a week ago" };
     private RelativeLayout[] tabLayoutClass;
     private TextView[] tabTextClass;
     private ImageView[] tabImageClass;
@@ -169,9 +170,91 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
          return size;
          }
 
+    public void setDayView(int day){
+
+     switch (day){
+
+         case 1 :
+
+             tabTextClass[0].setText(tabDayView[0]);
+
+             break;
+
+         case 2 :
+
+             tabTextClass[0].setText(tabDayView[1]);
+             tabTextClass[1].setText(tabDayView[0]);
+
+             break;
+
+         case 3 :
+
+             tabTextClass[0].setText(tabDayView[2]);
+             tabTextClass[1].setText(tabDayView[1]);
+             tabTextClass[2].setText(tabDayView[0]);
+
+
+             break;
+
+         case 4 :
+
+             tabTextClass[0].setText(tabDayView[3]);
+             tabTextClass[1].setText(tabDayView[2]);
+             tabTextClass[2].setText(tabDayView[1]);
+             tabTextClass[3].setText(tabDayView[0]);
+
+
+             break;
+
+         case 5 :
+
+             tabTextClass[0].setText(tabDayView[4]);
+             tabTextClass[1].setText(tabDayView[3]);
+             tabTextClass[2].setText(tabDayView[2]);
+             tabTextClass[3].setText(tabDayView[1]);
+             tabTextClass[4].setText(tabDayView[0]);
+
+
+             break;
+
+         case 6 :
+
+             tabTextClass[0].setText(tabDayView[5]);
+             tabTextClass[1].setText(tabDayView[4]);
+             tabTextClass[2].setText(tabDayView[3]);
+             tabTextClass[3].setText(tabDayView[2]);
+             tabTextClass[4].setText(tabDayView[1]);
+             tabTextClass[5].setText(tabDayView[0]);
+
+
+             break;
+
+         case 7 :
+
+             tabTextClass[0].setText(tabDayView[6]);
+             tabTextClass[1].setText(tabDayView[5]);
+             tabTextClass[2].setText(tabDayView[4]);
+             tabTextClass[3].setText(tabDayView[3]);
+             tabTextClass[4].setText(tabDayView[2]);
+             tabTextClass[5].setText(tabDayView[1]);
+             tabTextClass[6].setText(tabDayView[0]);
+
+
+             break;
+
+             default:
+
+                 break;
+
+     }
+
+
+    }
+
     public void setLayout(int l){
 
         if (history != null) {
+            setDayView(history.getSizeList());
             tabLayoutClass[l].getLayoutParams().width = getsizeX(history.getList(l).getMoodsNumber());
             tabLayoutClass[l].getLayoutParams().height = getsizeY();
             tabLayoutClass[l].setBackgroundColor(getResources().getColor(tabBackgroundColor[history.getList(l).getMoodsNumber()]));

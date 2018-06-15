@@ -11,7 +11,6 @@ public class History {
 
     }
 
-
     public void addList(MoodsSave MoodaddList){
 
         historyList.add(MoodaddList);

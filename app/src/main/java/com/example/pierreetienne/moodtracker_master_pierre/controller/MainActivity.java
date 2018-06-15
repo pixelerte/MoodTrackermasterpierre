@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
     private int[] tabSound = {R.raw.soundsad, R.raw.sounddisappointed, R.raw.soundnormal, R.raw.soundhappy, R.raw.soundsuperhappy};
     private static MainActivity mMainActivity;
+    private MediaPlayer playMoods;
 
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -99,8 +100,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         cal_now.setTime(dat);
 
         calendar.setTime(dat);
-        calendar.set(Calendar.HOUR,0);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,1);
 
         if(calendar.before(cal_now)){
             calendar.add(Calendar.DATE,1);
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Intent myIntent = new Intent(MainActivity.this, AlarmeMoodsClock.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0);
 
-        manager.setRepeating(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()+10, AlarmManager.INTERVAL_DAY, pendingIntent);
+        manager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()+10, pendingIntent);
     }
 
     public static MainActivity getInstance(){
@@ -290,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         //if user go up
         if (motionEvent.getY() < motionEvent1.getY())
         {
-
+            
             //if there are others moods show next moods
             if (moodNumber < 4)
             {
@@ -312,11 +314,10 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
             }
         }
 
-
-
         //play sound Moods
-        final MediaPlayer mp = MediaPlayer.create(this, tabSound[moodNumber]);
-        mp.start();
+
+        playMoods = MediaPlayer.create(this, tabSound[moodNumber]);
+        playMoods.start();
 
 
         Log.i(TAG, "var mood number " + moodNumber );
