@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
     private int[] tabSound = {R.raw.soundsad, R.raw.sounddisappointed, R.raw.soundnormal, R.raw.soundhappy, R.raw.soundsuperhappy};
     private static MainActivity mMainActivity;
-    private MediaPlayer playMoods;
 
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -292,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         //if user go up
         if (motionEvent.getY() < motionEvent1.getY())
         {
-            
+
             //if there are others moods show next moods
             if (moodNumber < 4)
             {
@@ -315,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         }
 
         //play sound Moods
+        MediaPlayer playMoods;
 
         playMoods = MediaPlayer.create(this, tabSound[moodNumber]);
         playMoods.start();
