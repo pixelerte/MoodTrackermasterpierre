@@ -1,6 +1,5 @@
 package com.example.pierreetienne.moodtracker_master_pierre.controller;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -12,7 +11,6 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
@@ -53,14 +51,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
     private int[] tabSound = {R.raw.soundsad, R.raw.sounddisappointed, R.raw.soundnormal, R.raw.soundhappy, R.raw.soundsuperhappy};
     private static MainActivity mMainActivity;
+    public static int io;
 
 
-    @TargetApi(Build.VERSION_CODES.N)
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.i(TAG, "onCreate: version android " + Build.VERSION.SDK_INT);
 
 
         if (savedInstanceState != null) {
@@ -76,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mhistory.setOnClickListener(mhistoryClick);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mMainActivity = MainActivity.this;
-
+        
+        
         startAlarm();
 
         String prefTester = mPreferences.getString("PrefMoodUserSave", null);
@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     //set alarm, call AlarmeMoodsClock.class
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void startAlarm() {
 
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         calendar.setTime(dat);
         calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MINUTE,0);
-        calendar.set(Calendar.SECOND,1);
+        calendar.set(Calendar.SECOND, 1);
 
         if(calendar.before(cal_now)){
             calendar.add(Calendar.DATE,1);
@@ -110,7 +109,15 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Intent myIntent = new Intent(MainActivity.this, AlarmeMoodsClock.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0);
 
-        manager.set(AlarmManager.RTC_WAKEUP,calendar.getTimeInMillis()+10, pendingIntent);
+        if (Build.VERSION.SDK_INT > 19) {
+            manager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 300, pendingIntent);
+            Log.i(TAG, "startAlarm: 1 ");
+        }
+
+        else {
+            manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 300, pendingIntent);
+            Log.i(TAG, "startAlarm: 2");
+        }
     }
 
     public static MainActivity getInstance(){

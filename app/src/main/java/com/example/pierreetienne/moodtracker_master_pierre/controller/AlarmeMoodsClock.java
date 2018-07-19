@@ -42,10 +42,11 @@ public class AlarmeMoodsClock extends BroadcastReceiver {
             saveHistory(context, HistoryList);
             resetMood(context);
 
-            //restart MainActivity
+        //restart MainActivity
         if (MainActivity.getInstance() != null) {
-            MainActivity.getInstance().recreate();
+            MainActivity.getInstance().onCreate(null);
             }
+
 
     }
 
