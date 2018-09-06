@@ -25,7 +25,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
     private int i = 0;
     private History history;
     private int[] tabBackgroundColor = {R.color.faded_red, R.color.warm_grey, R.color.cornflower_blue_65, R.color.light_sage, banana_yellow};
-    private String[] tabDayView = {"yesterday", "tow days ago", "three days ago", "four days ago", "five days ago", "six days ago", "a week ago" };
+    private int[] tabDayView = {R.string.yesterday, R.string.tow_days_ago, R.string.three_days_ago, R.string.four_days_ago, R.string.five_days_ago, R.string.six_days_ago, R.string.a_week_ago };
     private RelativeLayout[] tabLayoutClass;
     private TextView[] tabTextClass;
     private ImageView[] tabImageClass;
@@ -99,7 +99,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
         }
         else {
 
-            Toast.makeText(this," No mood saved detected ",
+            Toast.makeText(this,R.string.No_mood_saved_detected,
                     Toast.LENGTH_LONG).show();
 
         }
@@ -155,20 +155,6 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
 
         return size;
         }
-
-
-    //calculate the Layout size for vertical (screen / 7)
-
-    /*public int getsizeY(){
-
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-
-        int size = metrics.heightPixels / 7;
-
-
-         return size;
-         }*/
 
     public void setDayView(int day){
 

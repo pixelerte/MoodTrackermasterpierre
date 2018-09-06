@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MoodTracker-master-pierre</string>
+    <string name="add_comments">ajouter un commentaire</string>
+    <string name="cancel">annuler</string>
+    <string name="OK">sauvegarder</string>
+
+    <string name="yesterday">aujourd hui</string>
+    <string name="tow_days_ago">il y a deux jours</string>
+    <string name="three_days_ago">il y a trois jours</string>
+    <string name="four_days_ago">il y a quatre jours</string>
+    <string name="five_days_ago">il y a cinq jours</string>
+    <string name="six_days_ago">il y a six jours</string>
+    <string name="a_week_ago">il y a une semain</string>
+
+    <string name="No_mood_saved_detected">pas d humeur sauvegarder </string>
+
+</resources>

@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("add comments");
+                builder.setTitle(R.string.add_comments);
 
 
                 //create area text input
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 builder.setView(input);
 
                 //save comment user
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i(TAG, "onClick: OK");
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
                 });
 
                 //cancel, no saving comment
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i(TAG, "onClick: Cancel");
