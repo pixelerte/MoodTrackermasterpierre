@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     private int[] image = {R.drawable.smileysad, R.drawable.smileydisappointed, R.drawable.smileynormal, R.drawable.smileyhappy, R.drawable.smileysuperhappy};
     private int[] tabSound = {R.raw.soundsad, R.raw.sounddisappointed, R.raw.soundnormal, R.raw.soundhappy, R.raw.soundsuperhappy};
     private static MainActivity mMainActivity;
-    public static int io;
-
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mhistory.setOnClickListener(mhistoryClick);
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mMainActivity = MainActivity.this;
-        
-        
+
+
         startAlarm();
 
         String prefTester = mPreferences.getString("PrefMoodUserSave", null);
@@ -102,9 +99,9 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         calendar.set(Calendar.MINUTE,0);
         calendar.set(Calendar.SECOND, 1);
 
-        if(calendar.before(cal_now)){
+        //if(calendar.before(cal_now)){
             calendar.add(Calendar.DATE,1);
-        }
+        //
 
         Intent myIntent = new Intent(MainActivity.this, AlarmeMoodsClock.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0);
@@ -173,6 +170,8 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         Log.i(TAG, "PrefMoodUserLoad: " + userMoodSave.getComment() + " " + moodNumber);
 
         }
+
+
 
     //change background color end change moods image
     protected void setMoodsScreen(){

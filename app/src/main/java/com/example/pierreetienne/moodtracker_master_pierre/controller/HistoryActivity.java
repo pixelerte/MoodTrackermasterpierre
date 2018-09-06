@@ -159,7 +159,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
 
     //calculate the Layout size for vertical (screen / 7)
 
-    public int getsizeY(){
+    /*public int getsizeY(){
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -168,7 +168,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
 
 
          return size;
-         }
+         }*/
 
     public void setDayView(int day){
 
@@ -256,7 +256,7 @@ public class HistoryActivity extends AppCompatActivity implements View.OnClickLi
         if (history != null) {
             setDayView(history.getSizeList());
             tabLayoutClass[l].getLayoutParams().width = getsizeX(history.getList(l).getMoodsNumber());
-            tabLayoutClass[l].getLayoutParams().height = getsizeY();
+            //tabLayoutClass[l].getLayoutParams().height = getsizeY();
             tabLayoutClass[l].setBackgroundColor(getResources().getColor(tabBackgroundColor[history.getList(l).getMoodsNumber()]));
             tabTextClass[l].setVisibility(View.VISIBLE);
         if (history.getList(l).getComment() != null) {
