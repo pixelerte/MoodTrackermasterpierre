@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mMainActivity = MainActivity.this;
 
-
-        startAlarm();
+        setAlarm();
 
         String prefTester = mPreferences.getString("PrefMoodUserSave", null);
 
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     //set alarm, call AlarmeMoodsClock.class
-    public void startAlarm() {
+    public void setAlarm() {
 
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Date dat = new Date();
